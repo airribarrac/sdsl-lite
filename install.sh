@@ -2,6 +2,10 @@
 # This script builds all dependencies of sdsl
 # and installs the library on a LINUX or Mac OS X system
 
+
+# retrieve succinct
+git submodule update --init --recursive
+
 CUR_DIR=`pwd`
 SDSL_INSTALL_PREFIX=${HOME}
 if [ $# -ge 1 ]; then
@@ -53,7 +57,7 @@ if [ $? != 0 ]; then
 	exit 1
 fi
 
-cmake -DCMAKE_INSTALL_PREFIX="${SDSL_INSTALL_PREFIX}" .. # run cmake 
+cmake -DCMAKE_INSTALL_PREFIX="${SDSL_INSTALL_PREFIX}" .. # run cmake
 if [ $? != 0 ]; then
 	echo "ERROR: CMake build failed."
 	exit 1
@@ -86,6 +90,8 @@ if [ "`pwd`" != "${OLD_DIR}" ]; then
 	echo "ERROR: we are not in the original dir ${OLD_DIR} now."
 	exit 1
 fi
+
+cp -r ${CUR_DIR}/complementary/succinct ${SDSL_INSTALL_PREFIX}/complementary/succinct
 
 echo "SUCCESS: sdsl was installed successfully!"
 echo "The sdsl include files are located in '${SDSL_INSTALL_PREFIX}/include'."

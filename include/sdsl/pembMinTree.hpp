@@ -25,8 +25,13 @@
 #include "../complementary/Edge.hpp"
 #include "../complementary/Tree.hpp"
 #include "../complementary/Graph.hpp"
+
 #include "../complementary/succinct/bp_vector.hpp"
+#include "../complementary/succinct/bp_vector.cpp"
 #include "../complementary/succinct/rs_bit_vector.hpp"
+#include "../complementary/succinct/rs_bit_vector.cpp"
+#include "../complementary/succinct/mapper.hpp"
+#include "../complementary/succinct/mapper.cpp"
 
 //! Namespace for the succinct data structure library.
 namespace sdsl
