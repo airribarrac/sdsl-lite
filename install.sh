@@ -91,7 +91,7 @@ if [ "`pwd`" != "${OLD_DIR}" ]; then
 	exit 1
 fi
 
-cp -r ${CUR_DIR}/complementary/succinct ${SDSL_INSTALL_PREFIX}/complementary/succinct
+cp -r ${CUR_DIR}/include/complementary/succinct ${SDSL_INSTALL_PREFIX}/include/complementary/succinct
 
 echo "SUCCESS: sdsl was installed successfully!"
 echo "The sdsl include files are located in '${SDSL_INSTALL_PREFIX}/include'."
