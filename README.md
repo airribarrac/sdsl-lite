@@ -278,11 +278,14 @@ Personal copy of SDSL
 ---------------------
 
 This branch of SDSL includes code for the following research projects:
+#### Speeding up compact planar graphs by using shallower trees
+
+This projects analyzes different approaches to speed up Turan's representation of planar embeddings (see Fast and Compact Planar Embeddings below). We use the [SUCCINCT] c++ library for its implementation of the range min tree, and it is added as a submodule on install.
 
 #### Succinct Run-length Encoded Rank/Select Data Structure
 
 This project provides a succinct data structure to support access, rank and
-select operations over a sequence with runs. 
+select operations over a sequence with runs.
 
 A full description of the structure is available [here](https://arxiv.org/abs/1711.02910 "Run Compressed Rank/Select for Large Alphabets").
 
@@ -321,7 +324,7 @@ int main(int argc, char **argv) {
 
 #### Fast and Compact Planar Embeddings
 
-This project provides a succinct data structure to represent planar embeddings. 
+This project provides a succinct data structure to represent planar embeddings.
 
 A full description of the structure is available
 [here](https://arxiv.org/abs/1610.00130 "Fast and Compact Planar Embeddings").
@@ -375,3 +378,4 @@ g++ -std=c++11 -O3 -DNDEBUG -I ~/include -L ~/lib program.cpp -o program -lsdsl
 [SEAPAPER]: http://arxiv.org/pdf/1311.1249v1.pdf "SDSL paper"
 [HB]: https://github.com/simongog/sdsl-lite/blob/hybrid_bitvector/include/sdsl/hybrid_vector.hpp "Hybrid bitevctor"
 [DOXYGENDOCS]: http://algo2.iti.kit.edu/gog/docs/html/index.html "API Reference"
+[SUCCINCT]: https://github.com/ot/succinct/ "SUCCINCT c++ library"
