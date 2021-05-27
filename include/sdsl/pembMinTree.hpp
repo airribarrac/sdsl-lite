@@ -31,7 +31,7 @@
 #include "../complementary/succinct/rs_bit_vector.hpp"
 #include "../complementary/succinct/rs_bit_vector.cpp"
 #include "../complementary/succinct/mapper.hpp"
-#include "../complementary/succinct/mapper.cpp"
+
 
 //! Namespace for the succinct data structure library.
 namespace sdsl
