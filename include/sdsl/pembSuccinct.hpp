@@ -125,16 +125,16 @@ namespace sdsl
       #ifndef ORIGINAL_CONSTRUCTION
 
 
-      std::cerr  << "usando construccion secuencial" << std::endl;
+      //std::cerr  << "usando construccion secuencial" << std::endl;
       std::vector<bool> belongsToT;
       std::vector<bool> visitedEdge(2*m_edges,false);
       //std::vector<bool> visitedSecond(2*m_edges,false);
-      //std::cerr  << "rotare edges" << std::endl;
+      ////std::cerr  << "rotare edges" << std::endl;
       initEdge = g.rotateVertexEdges(initEdge);
-      //std::cerr  << "saco arbol" << std::endl;
+      ////std::cerr  << "saco arbol" << std::endl;
       getConstructionTree(g, belongsToT, initEdge, treeType);
 
-      //std::cerr  << "usando construccion secuencial" << std::endl;
+      ////std::cerr  << "usando construccion secuencial" << std::endl;
       unsigned int aIdx = 0;
       unsigned int bIdx = 1;
       unsigned int bStarIdx = 1;
@@ -142,13 +142,13 @@ namespace sdsl
       // B_local[0] = B_star_local[0] = 1;
       bStl[0] = bStarStl[0] = 1;
       while(1){
-        //std::cerr  << "arista " << g.getEdgeSrc(currEdge) << "->" << g.getEdgeTgt(currEdge);
+        ////std::cerr  << "arista " << g.getEdgeSrc(currEdge) << "->" << g.getEdgeTgt(currEdge);
         if(currEdge == initEdge && visitedEdge[g.getEdgeCmp(initEdge)] && visitedEdge[initEdge]){
-          //std::cerr  << " tercera vez de la inicial, termino" << std::endl;
+          ////std::cerr  << " tercera vez de la inicial, termino" << std::endl;
           break;
 
         }else if( !belongsToT[currEdge]){
-          //std::cerr  << " no esta en T, ";
+          ////std::cerr  << " no esta en T, ";
           // A_local[aIdx++] = 0;
           aStl[aIdx++] = 0;
 
@@ -161,13 +161,13 @@ namespace sdsl
           }
 
           //B_star_local[bStarIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
-          //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
-          //std::cerr  << "escribo 0 en A, " << B_star_local[bStarIdx-1] << " en B* pos " << bStarIdx-1 << std::endl;
+          ////std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
+          ////std::cerr  << "escribo 0 en A, " << B_star_local[bStarIdx-1] << " en B* pos " << bStarIdx-1 << std::endl;
           //belongsToT[currEdge] = true;
           visitedEdge[currEdge]= true;
 
         }else{
-          //std::cerr  << " esta en T, ";
+          ////std::cerr  << " esta en T, ";
           // A_local[aIdx++] = 1;
           aStl[aIdx++] = 1;
           if(visitedEdge[g.getEdgeCmp(currEdge)]){
@@ -178,17 +178,17 @@ namespace sdsl
             bStl[bIdx++] = 1;
           }
           //B_local[bIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
-          //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
+          ////std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
           //  belongsToT[currEdge] = true;
           visitedEdge[currEdge]= true;
           currEdge = g.getEdgeCmp(currEdge);
-          //std::cerr  << "escribo 1 en A, " << B_local[bIdx-1] << " en B pos " << bIdx-1<< std::endl;
+          ////std::cerr  << "escribo 1 en A, " << B_local[bIdx-1] << " en B pos " << bIdx-1<< std::endl;
         }
         currEdge = g.getNextEdgeCCW(currEdge);
       }
 
       #else
-      std::cerr  << "ejecutando construccion original "<< std::endl;
+      //std::cerr  << "ejecutando construccion original "<< std::endl;
       int *parent = new int[m_vertices ];
       for(unsigned int i=0; i<m_vertices; i++) parent[i]=-1;
       unsigned int *count_edges =  new unsigned int[2*(m_vertices-1)]();
@@ -312,37 +312,37 @@ namespace sdsl
       // m_B_star_st.set_vector(&m_B_star);
 
       //
-      // std::cerr  << "A: " ;
+      // //std::cerr  << "A: " ;
       // for(int i=0; i<aStl.size(); i++){
-      //   std::cerr  << aStl[i];
+      //   //std::cerr  << aStl[i];
       // }
-      // std::cerr  << std::endl;
-      // //std::cerr  << "   ";
+      // //std::cerr  << std::endl;
+      // ////std::cerr  << "   ";
       // for(int i=0; i<2*m_edges; i++){
-      //   std::cerr  << m_A[i];
+      //   //std::cerr  << m_A[i];
       // }
-      // std::cerr  << std::endl;
+      // //std::cerr  << std::endl;
       //
-      // std::cerr  << "B: ";
+      // //std::cerr  << "B: ";
       // for(int i=0; i<bStl.size(); i++){
-      //   std::cerr  << bStl[i];
+      //   //std::cerr  << bStl[i];
       // }
-      // std::cerr  << std::endl;
-      // //std::cerr  << "   ";
+      // //std::cerr  << std::endl;
+      // ////std::cerr  << "   ";
       // for(int i=0; i<2*m_vertices; i++){
-      //   std::cerr  << m_B_st[i];
+      //   //std::cerr  << m_B_st[i];
       // }
-      // std::cerr  << std::endl;
-      // std::cerr  << "B*: ";
+      // //std::cerr  << std::endl;
+      // //std::cerr  << "B*: ";
       // for(int i=0; i<bStarStl.size(); i++){
-      //   std::cerr  << bStarStl[i];
+      //   //std::cerr  << bStarStl[i];
       // }
-      // std::cerr  << std::endl;
-      // std::cerr  << "    ";
+      // //std::cerr  << std::endl;
+      // //std::cerr  << "    ";
       // for(int i=0; i<2*m_edges-2*m_vertices+4; i++){
-      //   std::cerr  << m_B_star_st[i];
+      //   //std::cerr  << m_B_star_st[i];
       // }
-      // std::cerr  << std::endl;
+      // //std::cerr  << std::endl;
 
     }
 
@@ -355,28 +355,28 @@ namespace sdsl
       vector<bool> B_star_local(2*m_edges-2*m_vertices+4,0);
       // std::vector<bool> aStl(2*m_edges,0), bStl(2*m_vertices,0),bStarStl(2*m_edges-2*m_vertices+4,0);
 
-      std::cerr  << "usando construccion secuencial" << std::endl;
+      // //std::cerr  << "usando construccion secuencial" << std::endl;
       std::vector<bool> belongsToT;
       std::vector<bool> visitedEdge(2*m_edges,false);
 
       g->getConstructionTree(belongsToT,initEdge,treeType);
 
 
-      std::cerr  << "usando construccion secuencial" << std::endl;
+      // //std::cerr  << "usando construccion secuencial" << std::endl;
       unsigned int aIdx = 0;
       unsigned int bIdx = 1;
       unsigned int bStarIdx = 1;
       unsigned int currEdge = initEdge;
       B_local[0] = B_star_local[0] = 1;
       while(1){
-        // std::cerr << "arista #"<<currEdge<<std::endl;
-        // std::cerr  << "arista " << g->getEdgeSrc(currEdge) << "->" << g->getEdgeTgt(currEdge)<<std::endl;;
+        // //std::cerr << "arista #"<<currEdge<<std::endl;
+        // //std::cerr  << "arista " << g->getEdgeSrc(currEdge) << "->" << g->getEdgeTgt(currEdge)<<std::endl;;
         if(currEdge == initEdge && visitedEdge[g->getEdgeCmp(initEdge)] && visitedEdge[initEdge]){
-          //std::cerr  << " tercera vez de la inicial, termino" << std::endl;
+          ////std::cerr  << " tercera vez de la inicial, termino" << std::endl;
           break;
 
         }else if( !belongsToT[currEdge]){
-          //std::cerr  << " no esta en T, ";
+          ////std::cerr  << " no esta en T, ";
           A_local[aIdx++] = 0;
           // aStl[aIdx-1] = 0;
 
@@ -389,13 +389,13 @@ namespace sdsl
           }
 
           //B_star_local[bStarIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
-          //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
-          //std::cerr  << "escribo 0 en A, " << B_star_local[bStarIdx-1] << " en B* pos " << bStarIdx-1 << std::endl;
+          ////std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
+          ////std::cerr  << "escribo 0 en A, " << B_star_local[bStarIdx-1] << " en B* pos " << bStarIdx-1 << std::endl;
           //belongsToT[currEdge] = true;
           visitedEdge[currEdge]= true;
 
         }else{
-          //std::cerr  << " esta en T, ";
+          ////std::cerr  << " esta en T, ";
           A_local[aIdx++] = 1;
           // aStl[aIdx-1] = 1;
           if(visitedEdge[g->getEdgeCmp(currEdge)]){
@@ -406,15 +406,15 @@ namespace sdsl
             // bStl[bIdx-1] = 1;
           }
           //B_local[bIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
-          //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
+          ////std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
           //  belongsToT[currEdge] = true;
           visitedEdge[currEdge]= true;
           currEdge = g->getEdgeCmp(currEdge);
-          // std::cerr << "actualice a cmp arista #"<<currEdge<<std::endl;
-          //std::cerr  << "escribo 1 en A, " << B_local[bIdx-1] << " en B pos " << bIdx-1<< std::endl;
+          // //std::cerr << "actualice a cmp arista #"<<currEdge<<std::endl;
+          ////std::cerr  << "escribo 1 en A, " << B_local[bIdx-1] << " en B pos " << bIdx-1<< std::endl;
         }
         currEdge = g->getNextEdgeCCW(currEdge);
-        // std::cerr << "actualice a next arista #"<<currEdge<<std::endl;
+        // //std::cerr << "actualice a next arista #"<<currEdge<<std::endl;
 
       }
 
@@ -493,43 +493,43 @@ namespace sdsl
     //   bit_vector_type B_star_local(2*m_edges-2*m_vertices+4,0);
     //   // std::vector<bool> aStl(2*m_edges,0), bStl(2*m_vertices,0),bStarStl(2*m_edges-2*m_vertices+4,0);
     //
-    //   std::cerr  << "usando construccion secuencial" << std::endl;
+    //   //std::cerr  << "usando construccion secuencial" << std::endl;
     //   std::vector<bool> belongsToT;
     //   std::vector<bool> visitedEdge(2*m_edges,false);
     //   //std::vector<bool> visitedSecond(2*m_edges,false);
-    //   //std::cerr  << "rotare edges" << std::endl;
+    //   ////std::cerr  << "rotare edges" << std::endl;
     //   // initEdge = g->rotateVertexEdges(initEdge);
-    //   //std::cerr  << "saco arbol" << std::endl;
+    //   ////std::cerr  << "saco arbol" << std::endl;
     //   // getConstructionTree(g, belongsToT, initEdge, treeType);
     //   g->getConstructionTree(belongsToT,initEdge,treeType);
     //
     //   //
     //   // for(size_type i=0; i< 2*m_edges; i++){
     //   //   if(belongsToT[i]){
-    //   //     std::cerr  << "arista " << g->getEdgeSrc(i) << "->" << g->getEdgeTgt(i)<<" pertenece"<<std::endl;;
+    //   //     //std::cerr  << "arista " << g->getEdgeSrc(i) << "->" << g->getEdgeTgt(i)<<" pertenece"<<std::endl;;
     //   //   }
     //   // }
     //   //
     //   // for(size_type i=0; i< 2*m_edges; i++){
     //   //   if(!belongsToT[i]){
-    //   //     std::cerr  << "arista " << g->getEdgeSrc(i) << "->" << g->getEdgeTgt(i)<<" no pertenece"<<std::endl;;
+    //   //     //std::cerr  << "arista " << g->getEdgeSrc(i) << "->" << g->getEdgeTgt(i)<<" no pertenece"<<std::endl;;
     //   //   }
     //   // }
-    //   std::cerr  << "usando construccion secuencial" << std::endl;
+    //   //std::cerr  << "usando construccion secuencial" << std::endl;
     //   unsigned int aIdx = 0;
     //   unsigned int bIdx = 1;
     //   unsigned int bStarIdx = 1;
     //   unsigned int currEdge = initEdge;
     //   B_local[0] = B_star_local[0] = 1;
     //   while(1){
-    //     // std::cerr << "arista #"<<currEdge<<std::endl;
-    //     // std::cerr  << "arista " << g->getEdgeSrc(currEdge) << "->" << g->getEdgeTgt(currEdge)<<std::endl;;
+    //     // //std::cerr << "arista #"<<currEdge<<std::endl;
+    //     // //std::cerr  << "arista " << g->getEdgeSrc(currEdge) << "->" << g->getEdgeTgt(currEdge)<<std::endl;;
     //     if(currEdge == initEdge && visitedEdge[g->getEdgeCmp(initEdge)] && visitedEdge[initEdge]){
-    //       //std::cerr  << " tercera vez de la inicial, termino" << std::endl;
+    //       ////std::cerr  << " tercera vez de la inicial, termino" << std::endl;
     //       break;
     //
     //     }else if( !belongsToT[currEdge]){
-    //       //std::cerr  << " no esta en T, ";
+    //       ////std::cerr  << " no esta en T, ";
     //       A_local[aIdx++] = 0;
     //       // aStl[aIdx-1] = 0;
     //
@@ -542,13 +542,13 @@ namespace sdsl
     //       }
     //
     //       //B_star_local[bStarIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
-    //       //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
-    //       //std::cerr  << "escribo 0 en A, " << B_star_local[bStarIdx-1] << " en B* pos " << bStarIdx-1 << std::endl;
+    //       ////std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
+    //       ////std::cerr  << "escribo 0 en A, " << B_star_local[bStarIdx-1] << " en B* pos " << bStarIdx-1 << std::endl;
     //       //belongsToT[currEdge] = true;
     //       visitedEdge[currEdge]= true;
     //
     //     }else{
-    //       //std::cerr  << " esta en T, ";
+    //       ////std::cerr  << " esta en T, ";
     //       A_local[aIdx++] = 1;
     //       // aStl[aIdx-1] = 1;
     //       if(visitedEdge[g->getEdgeCmp(currEdge)]){
@@ -559,15 +559,15 @@ namespace sdsl
     //         // bStl[bIdx-1] = 1;
     //       }
     //       //B_local[bIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
-    //       //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
+    //       ////std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
     //       //  belongsToT[currEdge] = true;
     //       visitedEdge[currEdge]= true;
     //       currEdge = g->getEdgeCmp(currEdge);
-    //       // std::cerr << "actualice a cmp arista #"<<currEdge<<std::endl;
-    //       //std::cerr  << "escribo 1 en A, " << B_local[bIdx-1] << " en B pos " << bIdx-1<< std::endl;
+    //       // //std::cerr << "actualice a cmp arista #"<<currEdge<<std::endl;
+    //       ////std::cerr  << "escribo 1 en A, " << B_local[bIdx-1] << " en B pos " << bIdx-1<< std::endl;
     //     }
     //     currEdge = g->getNextEdgeCCW(currEdge);
-    //     // std::cerr << "actualice a next arista #"<<currEdge<<std::endl;
+    //     // //std::cerr << "actualice a next arista #"<<currEdge<<std::endl;
     //
     //   }
     //
@@ -584,37 +584,37 @@ namespace sdsl
     //   m_B_star_st.swap(B_star_local_st);
     //
     //   //
-    //   // std::cerr  << "A: " ;
+    //   // //std::cerr  << "A: " ;
     //   // for(int i=0; i<aStl.size(); i++){
-    //   //   std::cerr  << aStl[i];
+    //   //   //std::cerr  << aStl[i];
     //   // }
-    //   // std::cerr  << std::endl;
-    //   // //std::cerr  << "   ";
+    //   // //std::cerr  << std::endl;
+    //   // ////std::cerr  << "   ";
     //   // for(int i=0; i<2*m_edges; i++){
-    //   //   std::cerr  << m_A[i];
+    //   //   //std::cerr  << m_A[i];
     //   // }
-    //   // std::cerr  << std::endl;
+    //   // //std::cerr  << std::endl;
     //   //
-    //   // std::cerr  << "B: ";
+    //   // //std::cerr  << "B: ";
     //   // for(int i=0; i<bStl.size(); i++){
-    //   //   std::cerr  << bStl[i];
+    //   //   //std::cerr  << bStl[i];
     //   // }
-    //   // std::cerr  << std::endl;
-    //   // //std::cerr  << "   ";
+    //   // //std::cerr  << std::endl;
+    //   // ////std::cerr  << "   ";
     //   // for(int i=0; i<2*m_vertices; i++){
-    //   //   std::cerr  << m_B_st[i];
+    //   //   //std::cerr  << m_B_st[i];
     //   // }
-    //   // std::cerr  << std::endl;
-    //   // std::cerr  << "B*: ";
+    //   // //std::cerr  << std::endl;
+    //   // //std::cerr  << "B*: ";
     //   // for(int i=0; i<bStarStl.size(); i++){
-    //   //   std::cerr  << bStarStl[i];
+    //   //   //std::cerr  << bStarStl[i];
     //   // }
-    //   // std::cerr  << std::endl;
-    //   // std::cerr  << "    ";
+    //   // //std::cerr  << std::endl;
+    //   // //std::cerr  << "    ";
     //   // for(int i=0; i<2*m_edges-2*m_vertices+4; i++){
-    //   //   std::cerr  << m_B_star_st[i];
+    //   //   //std::cerr  << m_B_star_st[i];
     //   // }
-    //   // std::cerr  << std::endl;
+    //   // //std::cerr  << std::endl;
     //
     // }
 
@@ -1016,12 +1016,12 @@ namespace sdsl
         std::vector<pair<unsigned int,unsigned int> > printBDistance(){
           std::unordered_map<unsigned int, unsigned int> dists;
           for(unsigned int i=0; i<2*m_vertices ;i++){
-            //std::cerr  <<m_B_st[i];
+            ////std::cerr  <<m_B_st[i];
             if(m_B_st[i] == 1){
               dists[m_B_st.find_close(i)-i]++;
             }
           }
-          //std::cerr  << std::endl;
+          ////std::cerr  << std::endl;
           std::vector<pair<unsigned int,unsigned int> > res(dists.size());
           std::copy(dists.begin(), dists.end(), res.begin());
           std::sort(res.begin(), res.end());
@@ -1031,12 +1031,12 @@ namespace sdsl
         std::vector<pair<unsigned int,unsigned int> > printBStarDistance(){
           std::unordered_map<unsigned int, unsigned int> dists;
           for(int i=0;i<2*m_edges-2*m_vertices+4;i++){
-            //std::cerr  <<m_B_star_st[i];
+            ////std::cerr  <<m_B_star_st[i];
             if(m_B_star_st[i] == 1){
               dists[m_B_star_st.find_close(i)-i]++;
             }
           }
-          //std::cerr  << std::endl;
+          ////std::cerr  << std::endl;
           std::vector<pair<unsigned int,unsigned int> > res(dists.size());
           std::copy(dists.begin(), dists.end(), res.begin());
           std::sort(res.begin(), res.end());
@@ -1047,20 +1047,20 @@ namespace sdsl
         // if they belong to T, starts
         virtual bool getConstructionTree(Graph g, std::vector<bool> &belongsToT, unsigned int initEdge, int treeType = 0){
           if(treeType == 0){
-            std::cerr << "dfs " << std::endl;
+            // //std::cerr << "dfs " << std::endl;
             return g.generateDfsSpanningTree(belongsToT, initEdge);
           }
           else if(treeType == 1){
-            std::cerr << "bfs " << std::endl;
+            // //std::cerr << "bfs " << std::endl;
             return g.generateBfsSpanningTree(belongsToT, initEdge);
           }else if(treeType==0xdeadbeef){
-            std::cerr << "heuristico" << std::endl;
+            // //std::cerr << "heuristico" << std::endl;
             return g.generateHeuristicBfsSpanningTree(belongsToT, initEdge);
           }else if(treeType>0){
-            std::cerr << "limitado " << std::endl;
+            // //std::cerr << "limitado " << std::endl;
             return g.generateLimitedDfsSpanningTree(belongsToT, initEdge, treeType);
           }else{
-            std::cerr << "dual " << std::endl;
+            // //std::cerr << "dual " << std::endl;
             return g.generateBfsDualSpanningTree(belongsToT, initEdge);
           }
         }
@@ -1070,7 +1070,7 @@ namespace sdsl
 
         bool getConstructionTree( std::vector<bool> &belongsToT, unsigned int initEdge, int treeType = 0){
           if(treeType == 0){
-            std::cerr << "dfs " << std::endl;
+            // //std::cerr << "dfs " << std::endl;
             unsigned int init = getEdgeSrc(initEdge);
             belongsToT.assign(2*edges(),false);
             std::vector<bool> visited(vertices(),false);
@@ -1080,7 +1080,7 @@ namespace sdsl
 
             while(!s.empty()){
               unsigned int node = s.top();
-              //std::cerr << node << std::endl;
+              ////std::cerr << node << std::endl;
               s.pop();
               for(unsigned int nextEdge = getVertexFirst(node); nextEdge <  2*m_edges; nextEdge = next(nextEdge) ){
                 unsigned int nextNode = getEdgeTgt(nextEdge);
@@ -1095,7 +1095,7 @@ namespace sdsl
 
           }
           else if(treeType == 1){
-            std::cerr << "bfs " << std::endl;
+            // //std::cerr << "bfs " << std::endl;
             unsigned int init = getEdgeSrc(initEdge);
             belongsToT.assign(2*edges(),false);
             std::vector<bool> visited(vertices(),false);
@@ -1105,7 +1105,7 @@ namespace sdsl
 
             while(!s.empty()){
               unsigned int node = s.front();
-              //std::cerr << node << std::endl;
+              ////std::cerr << node << std::endl;
               s.pop();
               for(unsigned int nextEdge = getVertexFirst(node); nextEdge <  2*m_edges; nextEdge = next(nextEdge) ){
                 unsigned int nextNode = getEdgeTgt(nextEdge);
@@ -1117,7 +1117,7 @@ namespace sdsl
               }
             }
           }else{
-            std::cerr << "dual" << std::endl;
+            //std::cerr << "dual" << std::endl;
             //start at outer face
             unsigned int init = 0;
             belongsToT.assign(2*edges(),true);
@@ -1128,7 +1128,7 @@ namespace sdsl
 
             while(!s.empty()){
               unsigned int node = s.front();
-              //std::cerr << node << std::endl;
+              ////std::cerr << node << std::endl;
               s.pop();
               for(unsigned int nextEdge = firstDual(node); nextEdge <  2*m_edges; nextEdge = nextDual(nextEdge) ){
                 unsigned int nextNode = getEdgeTgtDual(nextEdge);
@@ -1155,7 +1155,7 @@ namespace sdsl
             }else{
               h--;
             }
-            //std::cerr<<"curHeight: "<<h<<std::endl;
+            ////std::cerr<<"curHeight: "<<h<<std::endl;
           }
           return res;
         }
@@ -1171,7 +1171,7 @@ namespace sdsl
             }else{
               h--;
             }
-            //std::cerr<<"curHeight: "<<h<<std::endl;
+            ////std::cerr<<"curHeight: "<<h<<std::endl;
           }
           return res;
         }
