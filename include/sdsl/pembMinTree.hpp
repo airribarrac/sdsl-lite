@@ -1,5 +1,5 @@
-#ifndef INCLUDED_SDSL_PEMB
-#define INCLUDED_SDSL_PEMB
+#ifndef INCLUDED_SDSL_PEMB_MINTREE
+#define INCLUDED_SDSL_PEMB_MINTREE
 
 
 
@@ -25,6 +25,8 @@
 #include "../complementary/Edge.hpp"
 #include "../complementary/Tree.hpp"
 #include "../complementary/Graph.hpp"
+#include "../complementary/succinct/bp_vector.hpp"
+#include "../complementary/succinct/rs_bit_vector.hpp"
 
 //! Namespace for the succinct data structure library.
 namespace sdsl
@@ -53,18 +55,18 @@ namespace sdsl
   *        Computational Geometry: Theory and Applications
   *
   */
-
   template<class t_bitvector   = bit_vector,
-  class t_succ_tree    = bp_support_sada<>,
+  class t_succ_tree    = succinct::bp_vector,
   class t_rank        = typename t_bitvector::rank_1_type,
   class t_select1     = typename t_bitvector::select_1_type,
-  class t_select0     = typename t_bitvector::select_0_type>
-  class pemb
+  class t_select0     = typename t_bitvector::select_0_type
+  >
+  class pembMinTree
   {
   public:
     typedef int_vector<>::size_type              size_type;
     typedef int_vector<>::value_type             value_type;
-    typedef random_access_const_iterator<pemb> const_iterator;
+    typedef random_access_const_iterator<pembMinTree> const_iterator;
     typedef const_iterator                       iterator;
     typedef t_bitvector                          bit_vector_type;
     typedef t_rank                               rank_1_type;
@@ -79,85 +81,41 @@ namespace sdsl
     rank_1_type       m_A_rank;
     select_1_type     m_A_select1;
     select_0_type     m_A_select0;
-    bit_vector_type   m_B;
-    bit_vector_type   m_B_star;
+    // bit_vector_type   m_B;
+    // bit_vector_type   m_B_star;
     succ_tree          m_B_st;
     succ_tree          m_B_star_st;
 
-    void copy(const pemb& p) {
+    void copy(const pembMinTree& p) {
       m_vertices          = p.m_vertices;
       m_edges         = p.m_edges;
       m_A       = p.m_A;
-      m_A_rank  = p.m_A_rank;
-      m_A_select1     = p.m_A_select1;
-      m_A_select0     = p.m_A_select0;
-      m_A_rank.set_vector(&m_A);
-      m_A_select1.set_vector(&m_A);
-      m_A_select0.set_vector(&m_A);
-      m_B = p.m_B;
-      m_B_star = p.m_B_star;
+      // m_A_rank  = p.m_A_rank;
+      // m_A_select1     = p.m_A_select1;
+      // m_A_select0     = p.m_A_select0;
+      // m_A_rank.set_vector(&m_A);
+      // m_A_select1.set_vector(&m_A);
+      // m_A_select0.set_vector(&m_A);
+      // m_B = p.m_B;
+      // m_B_star = p.m_B_star;
       m_B_st = p.m_B_st;
       m_B_star_st = p.m_B_star_st;
-      m_B_st.set_vector(m_B);
-      m_B_star_st.set_vector(m_B_star);
+      // m_B_st.set_vector(m_B);
+      // m_B_star_st.set_vector(m_B_star);
     }
 
 
   public:
 
     //! Default constructor
-    pemb() {};
+    pembMinTree() {};
 
-    //initialize with bool vectors
-    pemb(vector<bool> &a, vector<bool> &b, vector<bool> &bStar){
-      m_vertices = b.size()/2;
-      m_edges = a.size()/2;
-      bit_vector_type A_local(2*m_edges,0);
-      bit_vector_type B_local(2*m_vertices,0);
-      bit_vector_type B_star_local(2*m_edges-2*m_vertices+4,0);
-
-
-      for(size_type i = 0; i<2*m_edges; ++i){
-        A_local[i]=a[i];
-      }
-      std::cerr << "copied A" << std::endl;
-
-      for(size_type i = 0; i<2*m_vertices; ++i){
-        B_local[i]=b[i];
-      }
-
-      std::cerr << "copied B" << std::endl;
-
-      for(size_type i = 0; i<2*m_edges-2*m_vertices+4; ++i){
-        B_star_local[i]=bStar[i];
-      }
-
-      std::cerr << "copied B*" << std::endl;
-
-      m_A.swap(A_local);
-      m_B.swap(B_local);
-      m_B_star.swap(B_star_local);
-      std::cerr << "swapped locals" << std::endl;
-      util::init_support(m_A_rank, &m_A);
-      util::init_support(m_A_select0, &m_A);
-      util::init_support(m_A_select1, &m_A);
-      std::cerr << "created bv op support" << std::endl;
-      succ_tree B_local_st(&m_B);
-      succ_tree B_star_local_st(&m_B_star);
-      std::cerr << "created succ tree" << std::endl;
-      m_B_st.swap(B_local_st);
-      m_B_st.set_vector(&m_B);
-      m_B_star_st.swap(B_star_local_st);
-      m_B_star_st.set_vector(&m_B_star);
-      std::cerr << "swapped supports" << std::endl;
-    }
-
-    pemb(Graph g, unsigned int initEdge = 0, int treeType = 0) {
+    pembMinTree(Graph g, unsigned int initEdge = 0, int treeType = 0) {
       m_vertices = g.vertices();
       m_edges = g.edges();
       bit_vector_type A_local(2*m_edges,0);
-      bit_vector_type B_local(2*m_vertices,0);
-      bit_vector_type B_star_local(2*m_edges-2*m_vertices+4,0);
+      // bit_vector_type B_local(2*m_vertices,0);
+      // bit_vector_type B_star_local(2*m_edges-2*m_vertices+4,0);
       std::vector<bool> aStl(2*m_edges,0), bStl(2*m_vertices,0),bStarStl(2*m_edges-2*m_vertices+4,0);
 
       #ifndef ORIGINAL_CONSTRUCTION
@@ -177,7 +135,8 @@ namespace sdsl
       unsigned int bIdx = 1;
       unsigned int bStarIdx = 1;
       unsigned int currEdge = initEdge;
-      B_local[0] = B_star_local[0] = 1;
+      // B_local[0] = B_star_local[0] = 1;
+      bStl[0] = bStarStl[0] = 1;
       while(1){
         //std::cerr  << "arista " << g.getEdgeSrc(currEdge) << "->" << g.getEdgeTgt(currEdge);
         if(currEdge == initEdge && visitedEdge[g.getEdgeCmp(initEdge)] && visitedEdge[initEdge]){
@@ -190,11 +149,11 @@ namespace sdsl
           aStl[aIdx-1] = 0;
 
           if(visitedEdge[g.getEdgeCmp(currEdge)]){
-            B_star_local[bStarIdx++] = 0;
-            bStarStl[bStarIdx-1] = 0;
+            // B_star_local[bStarIdx++] = 0;
+            bStarStl[bStarIdx++] = 0;
           }else{
-            B_star_local[bStarIdx++] = 1;
-            bStarStl[bStarIdx-1] = 1;
+            // B_star_local[bStarIdx++] = 1;
+            bStarStl[bStarIdx++] = 1;
           }
 
           //B_star_local[bStarIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
@@ -208,11 +167,11 @@ namespace sdsl
           A_local[aIdx++] = 1;
           aStl[aIdx-1] = 1;
           if(visitedEdge[g.getEdgeCmp(currEdge)]){
-            B_local[bIdx++] = 0;
-            bStl[bIdx-1] = 0;
+            // B_local[bIdx++] = 0;
+            bStl[bIdx++] = 0;
           }else{
-            B_local[bIdx++] = 1;
-            bStl[bIdx-1] = 1;
+            // B_local[bIdx++] = 1;
+            bStl[bIdx++] = 1;
           }
           //B_local[bIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
           //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
@@ -226,7 +185,7 @@ namespace sdsl
 
       #else
       std::cerr  << "ejecutando construccion original "<< std::endl;
-      int *parent = new int[m_vertices];
+      int *parent = new int[m_vertices ];
       for(unsigned int i=0; i<m_vertices; i++) parent[i]=-1;
       unsigned int *count_edges =  new unsigned int[2*(m_vertices-1)]();
       unsigned int *references =  new unsigned int[2*(m_vertices-1)]();
@@ -329,20 +288,24 @@ namespace sdsl
       delete[] marked_edges;
       #endif
       m_A.swap(A_local);
-      m_B.swap(B_local);
-      m_B_star.swap(B_star_local);
+      // m_B.swap(B_local);
+      //m_B_star.swap(B_star_local);
 
       util::init_support(m_A_rank, &m_A);
       util::init_support(m_A_select0, &m_A);
       util::init_support(m_A_select1, &m_A);
 
-      succ_tree B_local_st(&m_B);
-      succ_tree B_star_local_st(&m_B_star);
+      succ_tree B_local_st(bStl);
+      succ_tree B_star_local_st(bStarStl);
+
+      // bit_vector_type A_local(aStl);
+
+      // m_A.swap(A_local);
 
       m_B_st.swap(B_local_st);
-      m_B_st.set_vector(&m_B);
+      // m_B_st.set_vector(&m_B);
       m_B_star_st.swap(B_star_local_st);
-      m_B_star_st.set_vector(&m_B_star);
+      // m_B_star_st.set_vector(&m_B_star);
 
       //
       // std::cerr  << "A: " ;
@@ -363,7 +326,7 @@ namespace sdsl
       // std::cerr  << std::endl;
       // //std::cerr  << "   ";
       // for(int i=0; i<2*m_vertices; i++){
-      //   std::cerr  << m_B[i];
+      //   std::cerr  << m_B_st[i];
       // }
       // std::cerr  << std::endl;
       // std::cerr  << "B*: ";
@@ -373,42 +336,28 @@ namespace sdsl
       // std::cerr  << std::endl;
       // std::cerr  << "    ";
       // for(int i=0; i<2*m_edges-2*m_vertices+4; i++){
-      //   std::cerr  << m_B_star[i];
+      //   std::cerr  << m_B_star_st[i];
       // }
       // std::cerr  << std::endl;
 
     }
 
-    pemb(pemb *g, unsigned int initEdge = 0, int treeType = 0) {
+
+    pembMinTree(pembMinTree *g, unsigned int initEdge = 0, int treeType = 0) {
       m_vertices = g->vertices();
       m_edges = g->edges();
-      bit_vector_type A_local(2*m_edges,0);
-      bit_vector_type B_local(2*m_vertices,0);
-      bit_vector_type B_star_local(2*m_edges-2*m_vertices+4,0);
+      vector<bool> A_local(2*m_edges,0);
+      vector<bool> B_local(2*m_vertices,0);
+      vector<bool> B_star_local(2*m_edges-2*m_vertices+4,0);
       // std::vector<bool> aStl(2*m_edges,0), bStl(2*m_vertices,0),bStarStl(2*m_edges-2*m_vertices+4,0);
 
       std::cerr  << "usando construccion secuencial" << std::endl;
       std::vector<bool> belongsToT;
       std::vector<bool> visitedEdge(2*m_edges,false);
-      //std::vector<bool> visitedSecond(2*m_edges,false);
-      //std::cerr  << "rotare edges" << std::endl;
-      // initEdge = g->rotateVertexEdges(initEdge);
-      //std::cerr  << "saco arbol" << std::endl;
-      // getConstructionTree(g, belongsToT, initEdge, treeType);
+
       g->getConstructionTree(belongsToT,initEdge,treeType);
 
-      //
-      // for(size_type i=0; i< 2*m_edges; i++){
-      //   if(belongsToT[i]){
-      //     std::cerr  << "arista " << g->getEdgeSrc(i) << "->" << g->getEdgeTgt(i)<<" pertenece"<<std::endl;;
-      //   }
-      // }
-      //
-      // for(size_type i=0; i< 2*m_edges; i++){
-      //   if(!belongsToT[i]){
-      //     std::cerr  << "arista " << g->getEdgeSrc(i) << "->" << g->getEdgeTgt(i)<<" no pertenece"<<std::endl;;
-      //   }
-      // }
+
       std::cerr  << "usando construccion secuencial" << std::endl;
       unsigned int aIdx = 0;
       unsigned int bIdx = 1;
@@ -465,72 +414,220 @@ namespace sdsl
 
       }
 
+      bit_vector_type A_aux(A_local);
 
-      m_A.swap(A_local);
-      m_B.swap(B_local);
-      m_B_star.swap(B_star_local);
+      succ_tree B_aux(B_local);
+      succ_tree B_star_aux(B_star_local);
 
-      util::init_support(m_A_rank, &m_A);
-      util::init_support(m_A_select0, &m_A);
-      util::init_support(m_A_select1, &m_A);
+      m_A.swap(A_aux);
+      m_B_st.swap(B_aux);
+      m_B_star_st.swap(B_star_aux);
 
-      succ_tree B_local_st(&m_B);
-      succ_tree B_star_local_st(&m_B_star);
 
-      m_B_st.swap(B_local_st);
-      m_B_st.set_vector(&m_B);
-      m_B_star_st.swap(B_star_local_st);
-      m_B_star_st.set_vector(&m_B_star);
 
-      //
-      // std::cerr  << "A: " ;
-      // for(int i=0; i<aStl.size(); i++){
-      //   std::cerr  << aStl[i];
-      // }
-      // std::cerr  << std::endl;
-      // //std::cerr  << "   ";
-      // for(int i=0; i<2*m_edges; i++){
-      //   std::cerr  << m_A[i];
-      // }
-      // std::cerr  << std::endl;
-      //
-      // std::cerr  << "B: ";
-      // for(int i=0; i<bStl.size(); i++){
-      //   std::cerr  << bStl[i];
-      // }
-      // std::cerr  << std::endl;
-      // //std::cerr  << "   ";
-      // for(int i=0; i<2*m_vertices; i++){
-      //   std::cerr  << m_B[i];
-      // }
-      // std::cerr  << std::endl;
-      // std::cerr  << "B*: ";
-      // for(int i=0; i<bStarStl.size(); i++){
-      //   std::cerr  << bStarStl[i];
-      // }
-      // std::cerr  << std::endl;
-      // std::cerr  << "    ";
-      // for(int i=0; i<2*m_edges-2*m_vertices+4; i++){
-      //   std::cerr  << m_B_star[i];
-      // }
-      // std::cerr  << std::endl;
 
     }
 
 
+    pembMinTree(vector<bool> &a, vector<bool> &b, vector<bool> &bStar){
+      m_vertices = b.size()/2;
+      m_edges = a.size()/2;
+
+      succ_tree B_local_st(b);
+      succ_tree B_star_local_st(bStar);
+
+      bit_vector_type A_local(2*m_edges,0);
+      for(size_type i = 0; i<2*m_edges; ++i){
+        A_local[i]=a[i];
+      }
+      m_A.swap(A_local);
+
+      m_B_st.swap(B_local_st);
+      // m_B_st.set_vector(&m_B);
+      m_B_star_st.swap(B_star_local_st);
+
+    }
+
+
+    size_type getVertexFirst(size_type v){
+      return first(v);
+    }
+
+    size_type getEdgeSrc(size_type e){
+      return vertex(e);
+    }
+
+    size_type getEdgeCmp(size_type e){
+      return mate(e);
+    }
+
+    size_type getEdgeTgtDual(size_type e){
+      return vertexDual(mate(e));
+    }
+
+    size_type getEdgeSrcDual(size_type e){
+      return vertexDual(e);
+    }
+
+
+    size_type getEdgeTgt(size_type e){
+      return vertex(mate(e));
+    }
+
+    size_type getNextEdgeCCW(size_type i) {
+
+      size_type src = this->getEdgeSrc(i);
+      size_type first = this->getVertexFirst(src);
+      // size_type last = this->getVertexLast(src);
+
+      return (next(i) >= 2*m_edges)? first : next(i);
+    }
+
+    // pembMinTree(pembMinTree *g, unsigned int initEdge = 0, int treeType = 0) {
+    //   m_vertices = g->vertices();
+    //   m_edges = g->edges();
+    //   bit_vector_type A_local(2*m_edges,0);
+    //   bit_vector_type B_local(2*m_vertices,0);
+    //   bit_vector_type B_star_local(2*m_edges-2*m_vertices+4,0);
+    //   // std::vector<bool> aStl(2*m_edges,0), bStl(2*m_vertices,0),bStarStl(2*m_edges-2*m_vertices+4,0);
+    //
+    //   std::cerr  << "usando construccion secuencial" << std::endl;
+    //   std::vector<bool> belongsToT;
+    //   std::vector<bool> visitedEdge(2*m_edges,false);
+    //   //std::vector<bool> visitedSecond(2*m_edges,false);
+    //   //std::cerr  << "rotare edges" << std::endl;
+    //   // initEdge = g->rotateVertexEdges(initEdge);
+    //   //std::cerr  << "saco arbol" << std::endl;
+    //   // getConstructionTree(g, belongsToT, initEdge, treeType);
+    //   g->getConstructionTree(belongsToT,initEdge,treeType);
+    //
+    //   //
+    //   // for(size_type i=0; i< 2*m_edges; i++){
+    //   //   if(belongsToT[i]){
+    //   //     std::cerr  << "arista " << g->getEdgeSrc(i) << "->" << g->getEdgeTgt(i)<<" pertenece"<<std::endl;;
+    //   //   }
+    //   // }
+    //   //
+    //   // for(size_type i=0; i< 2*m_edges; i++){
+    //   //   if(!belongsToT[i]){
+    //   //     std::cerr  << "arista " << g->getEdgeSrc(i) << "->" << g->getEdgeTgt(i)<<" no pertenece"<<std::endl;;
+    //   //   }
+    //   // }
+    //   std::cerr  << "usando construccion secuencial" << std::endl;
+    //   unsigned int aIdx = 0;
+    //   unsigned int bIdx = 1;
+    //   unsigned int bStarIdx = 1;
+    //   unsigned int currEdge = initEdge;
+    //   B_local[0] = B_star_local[0] = 1;
+    //   while(1){
+    //     // std::cerr << "arista #"<<currEdge<<std::endl;
+    //     // std::cerr  << "arista " << g->getEdgeSrc(currEdge) << "->" << g->getEdgeTgt(currEdge)<<std::endl;;
+    //     if(currEdge == initEdge && visitedEdge[g->getEdgeCmp(initEdge)] && visitedEdge[initEdge]){
+    //       //std::cerr  << " tercera vez de la inicial, termino" << std::endl;
+    //       break;
+    //
+    //     }else if( !belongsToT[currEdge]){
+    //       //std::cerr  << " no esta en T, ";
+    //       A_local[aIdx++] = 0;
+    //       // aStl[aIdx-1] = 0;
+    //
+    //       if(visitedEdge[g->getEdgeCmp(currEdge)]){
+    //         B_star_local[bStarIdx++] = 0;
+    //         // bStarStl[bStarIdx-1] = 0;
+    //       }else{
+    //         B_star_local[bStarIdx++] = 1;
+    //         // bStarStl[bStarIdx-1] = 1;
+    //       }
+    //
+    //       //B_star_local[bStarIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
+    //       //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
+    //       //std::cerr  << "escribo 0 en A, " << B_star_local[bStarIdx-1] << " en B* pos " << bStarIdx-1 << std::endl;
+    //       //belongsToT[currEdge] = true;
+    //       visitedEdge[currEdge]= true;
+    //
+    //     }else{
+    //       //std::cerr  << " esta en T, ";
+    //       A_local[aIdx++] = 1;
+    //       // aStl[aIdx-1] = 1;
+    //       if(visitedEdge[g->getEdgeCmp(currEdge)]){
+    //         B_local[bIdx++] = 0;
+    //         // bStl[bIdx-1] = 0;
+    //       }else{
+    //         B_local[bIdx++] = 1;
+    //         // bStl[bIdx-1] = 1;
+    //       }
+    //       //B_local[bIdx++] = visitedEdge[g.getEdgeCmp(currEdge)] ? 0 : 1;
+    //       //std::cerr  << (!visitedEdge[g.getEdgeCmp(currEdge)]?"primera vez":"segunda vez") << std::endl;
+    //       //  belongsToT[currEdge] = true;
+    //       visitedEdge[currEdge]= true;
+    //       currEdge = g->getEdgeCmp(currEdge);
+    //       // std::cerr << "actualice a cmp arista #"<<currEdge<<std::endl;
+    //       //std::cerr  << "escribo 1 en A, " << B_local[bIdx-1] << " en B pos " << bIdx-1<< std::endl;
+    //     }
+    //     currEdge = g->getNextEdgeCCW(currEdge);
+    //     // std::cerr << "actualice a next arista #"<<currEdge<<std::endl;
+    //
+    //   }
+    //
+    //
+    //   succ_tree B_local_st(bStl);
+    //   succ_tree B_star_local_st(bStarStl);
+    //
+    //   bit_vector_type A_local(aStl);
+    //
+    //   m_A.swap(A_local);
+    //
+    //   m_B_st.swap(B_local_st);
+    //   // m_B_st.set_vector(&m_B);
+    //   m_B_star_st.swap(B_star_local_st);
+    //
+    //   //
+    //   // std::cerr  << "A: " ;
+    //   // for(int i=0; i<aStl.size(); i++){
+    //   //   std::cerr  << aStl[i];
+    //   // }
+    //   // std::cerr  << std::endl;
+    //   // //std::cerr  << "   ";
+    //   // for(int i=0; i<2*m_edges; i++){
+    //   //   std::cerr  << m_A[i];
+    //   // }
+    //   // std::cerr  << std::endl;
+    //   //
+    //   // std::cerr  << "B: ";
+    //   // for(int i=0; i<bStl.size(); i++){
+    //   //   std::cerr  << bStl[i];
+    //   // }
+    //   // std::cerr  << std::endl;
+    //   // //std::cerr  << "   ";
+    //   // for(int i=0; i<2*m_vertices; i++){
+    //   //   std::cerr  << m_B_st[i];
+    //   // }
+    //   // std::cerr  << std::endl;
+    //   // std::cerr  << "B*: ";
+    //   // for(int i=0; i<bStarStl.size(); i++){
+    //   //   std::cerr  << bStarStl[i];
+    //   // }
+    //   // std::cerr  << std::endl;
+    //   // std::cerr  << "    ";
+    //   // for(int i=0; i<2*m_edges-2*m_vertices+4; i++){
+    //   //   std::cerr  << m_B_star_st[i];
+    //   // }
+    //   // std::cerr  << std::endl;
+    //
+    // }
 
     //! Copy constructor
-    pemb(const pemb& g) {
+    pembMinTree(const pembMinTree& g) {
       copy(g);
     }
 
     //! Copy constructor
-    pemb(pemb&& g) {
+    pembMinTree(pembMinTree&& g) {
       *this = std::move(g);
     }
 
     //! Assignment operator
-    pemb& operator=(const pemb g) {
+    pembMinTree& operator=(const pembMinTree g) {
       if (this != &g) {
         copy(g);
       }
@@ -538,53 +635,53 @@ namespace sdsl
     }
 
     //! Assignment move operator
-    pemb& operator=(pemb&& g) {
+    pembMinTree& operator=(pembMinTree&& g) {
       if (this != &g) {
         m_vertices          = g.m_vertices;
         m_edges         = g.m_edges;
 
         m_A             = std::move(g.m_A);
-        m_A_rank        = std::move(g.m_A_rank);
-        m_A_select1     = std::move(g.m_A_select1);
-        m_A_select0     = std::move(g.m_A_select0);
-        m_A_rank.set_vector(&m_A);
-        m_A_select1.set_vector(&m_A);
-        m_A_select0.set_vector(&m_A);
+        // m_A_rank        = std::move(g.m_A_rank);
+        // m_A_select1     = std::move(g.m_A_select1);
+        // m_A_select0     = std::move(g.m_A_select0);
+        // m_A_rank.set_vector(&m_A);
+        // m_A_select1.set_vector(&m_A);
+        // m_A_select0.set_vector(&m_A);
 
-        m_B             = std::move(g.m_B);
-        m_B_star        = std::move(g.m_B_star);
+        // m_B             = std::move(g.m_B);
+        // m_B_star        = std::move(g.m_B_star);
 
         m_B_st          = std::move(g.m_B_st);
-        m_B_st.set_vector(&m_B);
+        // m_B_st.set_vector(&m_B);
 
         m_B_star_st          = std::move(g.m_B_star_st);
-        m_B_star_st.set_vector(&m_B_star);
+        // m_B_star_st.set_vector(&m_B_star);
       }
       return *this;
     }
 
     //! Swap operator
-    void swap(pemb& g) {
+    void swap(pembMinTree& g) {
       if (this != &g) {
         std::swap(m_vertices, g.m_vertices);
         std::swap(m_edges,  g.m_edges);
 
-        m_A.swap(g.m_A);
-        util::swap_support(m_A_rank, g.m_A_rank, &m_A, &(g.m_A));
-        util::swap_support(m_A_select1, g.m_A_select1, &m_A, &(g.m_A));
-        util::swap_support(m_A_select0, g.m_A_select0, &m_A, &(g.m_A));
+        //m_A.swap(g.m_A);
+        // util::swap_support(m_A_rank, g.m_A_rank, &m_A, &(g.m_A));
+        // util::swap_support(m_A_select1, g.m_A_select1, &m_A, &(g.m_A));
+        // util::swap_support(m_A_select0, g.m_A_select0, &m_A, &(g.m_A));
 
-        m_B.swap(g.m_B);
-        util::swap_support(m_B_st, g.m_B_st, &m_B, &(g.m_B));
-
-        m_B_star.swap(g.m_B_star);
-        util::swap_support(m_B_star_st, g.m_B_star_st, &m_B_star,
-          &(g.m_B_star));
+        //m_B.swap(g.m_B);
+        // util::swap_support(m_B_st, g.m_B_st, &m_B, &(g.m_B));
+        //
+        // //m_B_star.swap(g.m_B_star);
+        // util::swap_support(m_B_star_st, g.m_B_star_st, &m_B_star,
+        //   &(g.m_B_star));
         }
       }
 
       //! Returns the number of vertices of the graph
-      size_type vertices() const {
+      size_type vertices()const {
         return m_vertices;
       }
 
@@ -617,16 +714,16 @@ namespace sdsl
           written_bytes += write_member(m_vertices, out, child, "vertices");
           written_bytes += write_member(m_edges, out, child, "edges");
 
-          written_bytes += m_A.serialize(out, child, "A");
-          written_bytes += m_A_rank.serialize(out, child, "A_rank");
-          written_bytes += m_A_select1.serialize(out, child, "A_select1");
-          written_bytes += m_A_select0.serialize(out, child, "A_select0");
+          // written_bytes += //m_A.serialize(out, child, "A");
+          // written_bytes += m_A_rank.serialize(out, child, "A_rank");
+          // written_bytes += m_A_select1.serialize(out, child, "A_select1");
+          // written_bytes += m_A_select0.serialize(out, child, "A_select0");
 
-          written_bytes += m_B.serialize(out, child, "B");
-          written_bytes += m_B_st.serialize(out, child, "B_succ_tree");
-
-          written_bytes += m_B_star.serialize(out, child, "B_star");
-          written_bytes += m_B_star_st.serialize(out, child, "B_star_succ_tree");
+          // written_bytes += //m_B.serialize(out, child, "B");
+          // written_bytes += m_B_st.serialize(out, child, "B_succ_tree");
+          //
+          // written_bytes += //m_B_star.serialize(out, child, "B_star");
+          // written_bytes += m_B_star_st.serialize(out, child, "B_star_succ_tree");
 
           structure_tree::add_size(child, written_bytes);
           return written_bytes;
@@ -636,22 +733,22 @@ namespace sdsl
         void load(std::istream& in) {
           read_member(m_vertices, in);
           read_member(m_edges, in);
-          m_A.load(in);
-          m_A_rank.load(in, &m_A);
-          m_A_select1.load(in, &m_A);
-          m_A_select0.load(in, &m_A);
+          //m_A.load(in);
+          // m_A_rank.load(in, &m_A);
+          // m_A_select1.load(in, &m_A);
+          // m_A_select0.load(in, &m_A);
 
-          m_B.load(in);
-          m_B_st.load(in, &m_B);
+          //m_B.load(in);
+          // m_B_st.load(in, &m_B);
 
-          m_B_star.load(in);
-          m_B_star_st.load(in, &m_B_star);
+          //m_B_star.load(in);
+          // m_B_star_st.load(in, &m_B_star);
         }
 
         /* Assuming indices start with 0 */
         size_type first(size_type v) {
           if(v >= 0) {
-            size_type pos = m_B_st.select(v+1);
+            size_type pos = m_B_st.select(v+1-1);
             size_type edge = 0;
             if(pos)
             edge = m_A_select1(pos);
@@ -665,7 +762,7 @@ namespace sdsl
 
         size_type firstDual(size_type f) {
           if(f >= 0) {
-            size_type pos = m_B_star_st.select(f+1);
+            size_type pos = m_B_star_st.select(f+1-1);
             size_type edge = 0;
             if(pos)
             edge = m_A_select0(pos);
@@ -684,7 +781,7 @@ namespace sdsl
 
             // Simulating the match operation
             size_type match_in_B;
-            if(m_B[pos_in_B] == 1)
+            if(m_B_st[pos_in_B] == 1)
             match_in_B = m_B_st.find_close(pos_in_B);
             else
             match_in_B = m_B_st.find_open(pos_in_B);
@@ -696,7 +793,7 @@ namespace sdsl
 
             // Simulating the match operation
             size_type match_in_B_star;
-            if(m_B_star[pos_in_B_star] == 1)
+            if(m_B_star_st[pos_in_B_star] == 1)
             match_in_B_star = m_B_star_st.find_close(pos_in_B_star);
             else
             match_in_B_star = m_B_star_st.find_open(pos_in_B_star);
@@ -716,20 +813,11 @@ namespace sdsl
           }
           else {
             size_type pos_in_B = m_A_rank(i+1); // rank1
-            if(m_B[pos_in_B] == 1) {
+            if(m_B_st[pos_in_B] == 1) {
               return mate(i) + 1;
             }
           }
           return -1;
-        }
-
-        size_type getNextEdgeCCW(size_type i) {
-
-          size_type src = this->getEdgeSrc(i);
-          size_type first = this->getVertexFirst(src);
-          // size_type last = this->getVertexLast(src);
-
-          return (next(i) >= 2*m_edges)? first : next(i);
         }
 
         //inverted operations on dual
@@ -743,7 +831,7 @@ namespace sdsl
           }
           else {
             size_type pos_in_B_star = i+1-m_A_rank(i+1); // rank0
-            if(m_B_star[pos_in_B_star] == 1) {
+            if(m_B_star_st[pos_in_B_star] == 1) {
               return mate(i) + 1;
             }
           }
@@ -780,93 +868,68 @@ namespace sdsl
         size_type vertex(size_type e) {
           size_type pos_in_A = m_A_rank(e+1); // rank1
           if(m_A[e] == 1) {
-            if(m_B[pos_in_A] == 0) {
+            if(m_B_st[pos_in_A] == 0) {
               size_type match_pos;
-              if(m_B[pos_in_A] == 1)
+              if(m_B_st[pos_in_A] == 1)
               match_pos = m_B_st.find_close(pos_in_A);
               else
               match_pos = m_B_st.find_open(pos_in_A);
 
-              return m_B_st.rank(match_pos) - 1;
+              return m_B_st.rank(match_pos+1) - 1;
             }
             else {
               size_type par = m_B_st.parent_t(pos_in_A);
-              return m_B_st.rank(par) - 1;
+              return m_B_st.rank(par+1) - 1;
             }
           }
           else {
-            if(m_B[pos_in_A] == 1) {
-              return m_B_st.rank(pos_in_A) - 1;
+            if(m_B_st[pos_in_A] == 1) {
+              return m_B_st.rank(pos_in_A+1) - 1;
             }
             else {
               size_type match_pos;
-              if(m_B[pos_in_A] == 1)
+              if(m_B_st[pos_in_A] == 1)
               match_pos = m_B_st.find_close(pos_in_A);
               else
               match_pos = m_B_st.find_open(pos_in_A);
 
               size_type par = m_B_st.parent_t(match_pos);
-              return m_B_st.rank(par) - 1;
+              return m_B_st.rank(par+1) - 1;
             }
           }
-        }
-
-        size_type getVertexFirst(size_type v){
-          return first(v);
-        }
-
-        size_type getEdgeSrc(size_type e){
-          return vertex(e);
-        }
-
-        size_type getEdgeCmp(size_type e){
-          return mate(e);
-        }
-
-        size_type getEdgeTgtDual(size_type e){
-          return vertexDual(mate(e));
-        }
-
-        size_type getEdgeSrcDual(size_type e){
-          return vertexDual(e);
-        }
-
-
-        size_type getEdgeTgt(size_type e){
-          return vertex(mate(e));
         }
 
         //returns idx of face visited on traversal when visiting edge e
         size_type vertexDual(size_type e) {
           size_type pos_in_A = e+1-m_A_rank(e+1); // rank0
           if(m_A[e] == 0) {
-            if(m_B_star[pos_in_A] == 0) {
+            if(m_B_star_st[pos_in_A] == 0) {
               size_type match_pos;
-              if(m_B_star[pos_in_A] == 1)
+              if(m_B_star_st[pos_in_A] == 1)
               match_pos = m_B_star_st.find_close(pos_in_A);
               else
               match_pos = m_B_star_st.find_open(pos_in_A);
 
-              return m_B_star_st.rank(match_pos) - 1;
+              return m_B_star_st.rank(match_pos+1) - 1;
             }
             else {
               size_type par = m_B_star_st.parent_t(pos_in_A);
-              return m_B_star_st.rank(par) - 1;
+              return m_B_star_st.rank(par+1) - 1;
             }
           }
           else {
-            if(m_B_star[pos_in_A] == 1) {
-              return m_B_star_st.rank(pos_in_A) - 1;
+            if(m_B_star_st[pos_in_A] == 1) {
+              return m_B_star_st.rank(pos_in_A+1) - 1;
             }
             else {
               size_type match_pos;
-              if(m_B_star[pos_in_A] == 1)
+              if(m_B_star_st[pos_in_A] == 1)
               match_pos = m_B_star_st.find_close(pos_in_A);
               else
               match_pos = m_B_star_st.find_open(pos_in_A);
 
               size_type par = m_B_star_st.parent_t(match_pos);
-              return m_B_star_st.rank(par) - 1;
+              return m_B_star_st.rank(par+1) - 1;
             }
           }
         }
@@ -951,8 +1014,8 @@ namespace sdsl
         std::vector<pair<unsigned int,unsigned int> > printBDistance(){
           std::unordered_map<unsigned int, unsigned int> dists;
           for(unsigned int i=0; i<2*m_vertices ;i++){
-            //std::cerr  <<m_B[i];
-            if(m_B[i] == 1){
+            //std::cerr  <<m_B_st[i];
+            if(m_B_st[i] == 1){
               dists[m_B_st.find_close(i)-i]++;
             }
           }
@@ -966,8 +1029,8 @@ namespace sdsl
         std::vector<pair<unsigned int,unsigned int> > printBStarDistance(){
           std::unordered_map<unsigned int, unsigned int> dists;
           for(int i=0;i<2*m_edges-2*m_vertices+4;i++){
-            //std::cerr  <<m_B_star[i];
-            if(m_B_star[i] == 1){
+            //std::cerr  <<m_B_star_st[i];
+            if(m_B_star_st[i] == 1){
               dists[m_B_star_st.find_close(i)-i]++;
             }
           }
@@ -999,6 +1062,8 @@ namespace sdsl
             return g.generateBfsDualSpanningTree(belongsToT, initEdge);
           }
         }
+
+
 
 
         bool getConstructionTree( std::vector<bool> &belongsToT, unsigned int initEdge, int treeType = 0){
@@ -1082,7 +1147,7 @@ namespace sdsl
           int res = 0;
           int h = 0;
           for(int i=0;i<2*m_vertices;i++){
-            if(m_B[i] == 1){
+            if(m_B_st[i] == 1){
               h++;
               res = max(res,h);
             }else{
@@ -1098,7 +1163,7 @@ namespace sdsl
           int res = 0;
           int h = 0;
           for(int i=0;i<2*m_edges-2*m_vertices+4;i++){
-            if(m_B_star[i] == 1){
+            if(m_B_star_st[i] == 1){
               h++;
               res = max(res,h);
             }else{
@@ -1167,12 +1232,12 @@ namespace sdsl
 
         void dumpSpacesOnStream(std::ostream &out){
           //ASpace ; A_rsSupport_Space ; BSpace ; B_rs_support_Space; B_bp_support_Space ; BStarSpace ; BStar_rs_support_Space; BStar_bp_support_Space
-          out << size_in_bytes(m_A) << " ; " << size_in_bytes(m_A_rank) +
+          out <<  size_in_bytes(m_A) << " ; " << size_in_bytes(m_A_rank) +
           size_in_bytes(m_A_select1) + size_in_bytes(m_A_select0) << " ; ";
-          out << size_in_bytes(m_B) << " ; " << size_in_bytes(m_B_st.bp_rank) + size_in_bytes(m_B_st.bp_select)  << " ; ";
-          out << size_in_bytes(m_B_st)-size_in_bytes(m_B_st.bp_rank) - size_in_bytes(m_B_st.bp_select)  << " ; ";
-          out << size_in_bytes(m_B_star) << " ; " << size_in_bytes(m_B_star_st.bp_rank) + size_in_bytes(m_B_star_st.bp_select)  << " ; ";
-          out << size_in_bytes(m_B_star_st)-size_in_bytes(m_B_star_st.bp_rank) - size_in_bytes(m_B_star_st.bp_select)  ;
+          out << m_B_st.get_size_in_bytes() << " ; " << m_B_st.get_support_size_in_bytes() <<";"<<
+              m_B_st.get_bp_size_in_bytes()<< " ; ";
+          out << m_B_star_st.get_size_in_bytes() << " ; " << m_B_star_st.get_support_size_in_bytes() <<";"<<
+              m_B_star_st.get_bp_size_in_bytes() ;
         }
       };
 

@@ -14,7 +14,7 @@ using namespace sdsl;
 #define CLOSE_PAR 0
 #define OPEN_PAR 1
 #define EMPTY 2
-#define NONE 3
+#define NONEN 3
 
 
 class Graph {
@@ -278,7 +278,7 @@ public:
     unsigned int n = this->vertices();
     unsigned int m = this->edges();
 
-    int_vector<> S(4*n-5, NONE, 8); // Output string
+    int_vector<> S(4*n-5, NONEN, 8); // Output string
     char *visited = new char[2*m]();
     /*** Initial setting ***/
 
