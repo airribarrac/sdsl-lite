@@ -438,7 +438,6 @@ public:
     //   parentEdge[nextNode] = nextEdge;
     //   s.push(nextNode);
     // }
-    std::cerr << "chuuta" <<std::endl;
     std::queue<pair<unsigned int,unsigned int> > frontierNodes;
     while(!s.empty()){
       unsigned int node = s.top().first;
@@ -587,7 +586,7 @@ public:
 
   //generate tree based on a BFS on dual graph
   bool generateBfsDualSpanningTree(std::vector<bool> &belongsToT, unsigned int initEdge){
-    std::cerr << "construccion con dual" << std::endl;
+      std::cerr << "construccion con dual" << std::endl;
       belongsToT.assign(2*edges(),true);
       //face to which edge i belongs
       std::vector<unsigned int> edgeFace(2*edges(), -1);

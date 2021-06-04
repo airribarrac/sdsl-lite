@@ -21,6 +21,7 @@
 #include <stack>
 #include <utility>
 
+#include "../complementary/GraphVisitor.hpp"
 #include "../complementary/Vertex.hpp"
 #include "../complementary/Edge.hpp"
 #include "../complementary/Tree.hpp"
@@ -152,7 +153,12 @@ namespace sdsl
       std::cerr << "swapped supports" << std::endl;
     }
 
-    pemb(Graph g, unsigned int initEdge = 0, int treeType = 0) {
+    pemb(Graph g, unsigned int initEdge = 0, GraphSpanningTreeGenerator *generator=NULL) {
+      DfsPrimalSTGenerator defaultGenerator;
+      if(generator==NULL){
+        generator = &defaultGenerator;
+      }
+
       m_vertices = g.vertices();
       m_edges = g.edges();
       bit_vector_type A_local(2*m_edges,0);
@@ -170,7 +176,13 @@ namespace sdsl
       //std::cerr  << "rotare edges" << std::endl;
       initEdge = g.rotateVertexEdges(initEdge);
       //std::cerr  << "saco arbol" << std::endl;
-      getConstructionTree(g, belongsToT, initEdge, treeType);
+
+      generator->setGraph(&g);
+      generator->setInitialEdge(initEdge);
+      belongsToT = generator->getSpanningTree();
+
+
+      // getConstructionTree(g, belongsToT, initEdge, treeType);
 
       //std::cerr  << "usando construccion secuencial" << std::endl;
       unsigned int aIdx = 0;
