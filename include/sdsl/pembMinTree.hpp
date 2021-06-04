@@ -115,7 +115,13 @@ namespace sdsl
     //! Default constructor
     pembMinTree() {};
 
-    pembMinTree(Graph g, unsigned int initEdge = 0, int treeType = 0) {
+    pembMinTree(Graph g, unsigned int initEdge = 0, GraphSpanningTreeGenerator *generator=NULL) {
+
+      DfsPrimalSTGenerator defaultGenerator;
+      if(generator==NULL){
+        generator = &defaultGenerator;
+      }
+
       m_vertices = g.vertices();
       m_edges = g.edges();
       bit_vector_type A_local(2*m_edges,0);
@@ -133,7 +139,9 @@ namespace sdsl
       ////std::cerr  << "rotare edges" << std::endl;
       initEdge = g.rotateVertexEdges(initEdge);
       ////std::cerr  << "saco arbol" << std::endl;
-      getConstructionTree(g, belongsToT, initEdge, treeType);
+      generator->setGraph(&g);
+      generator->setInitialEdge(initEdge);
+      belongsToT = generator->getSpanningTree();
 
       ////std::cerr  << "usando construccion secuencial" << std::endl;
       unsigned int aIdx = 0;
