@@ -323,6 +323,59 @@ private:
 };
 
 
+class DegHeurSTGenerator: public GraphSpanningTreeGenerator{
+public:
+
+  vector<bool> getSpanningTree() override {
+    vector<bool> belongsToT(2*_g->edges(),false);
+    unsigned int init = _g->getEdgeSrc(_initialEdge);
+    std::vector<bool> visited(_g->vertices(),false);
+    std::priority_queue<std::pair<unsigned int, unsigned int>> pq;
+
+    std::vector<unsigned int> externalEdges = _g->externalFace();
+
+    for(int i=0; i<externalEdges.size(); i++){
+      unsigned int currEdge = externalEdges[i];
+      unsigned int currNode = _g->getEdgeSrc(currEdge);
+      unsigned int currDegree = _g->getVertexLast(currNode)-_g->getVertexFirst(currNode);
+      unsigned int initDegree = _g->getVertexLast(init)-_g->getVertexFirst(init);
+
+      if(currDegree>initDegree){
+        init = currNode;
+      }
+    }
+
+    unsigned int initEdgeCmp = _g->getVertexFirst(init);
+    unsigned int initEdge = _g->getEdgeCmp(initEdgeCmp);
+
+    pq.push(std::make_pair(_g->getVertexLast(init)-_g->getVertexFirst(init), initEdge));
+    visited[init] = true;
+    initEdge = initEdgeCmp;
+    while(!pq.empty()){
+      auto pa = pq.top();
+      unsigned int edge = pa.second;
+      unsigned int node = _g->getEdgeTgt(edge);
+      // std::cerr << node << std::endl;
+      pq.pop();
+      for(unsigned int nextEdge = _g->getVertexFirst(node); nextEdge <= _g->getVertexLast(node); ++nextEdge ){
+        unsigned int nextNode = _g->getEdgeTgt(nextEdge);
+        if(!visited[nextNode]){
+          unsigned int nextNodeDeg = _g->getVertexLast(nextNode)-_g->getVertexFirst(nextNode);
+          visited[nextNode] = true;
+          pq.push(std::make_pair(nextNodeDeg,nextEdge));
+          belongsToT[nextEdge] = belongsToT[_g->getEdgeCmp(nextEdge)] = true;
+        }
+      }
+    }
+
+
+    return belongsToT;
+  }
+private:
+  unsigned int _maxHeight;
+};
+
+
 
 
 #endif

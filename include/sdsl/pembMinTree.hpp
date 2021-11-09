@@ -21,6 +21,7 @@
 #include <stack>
 #include <utility>
 
+#include "../complementary/GraphVisitor.hpp"
 #include "../complementary/Vertex.hpp"
 #include "../complementary/Edge.hpp"
 #include "../complementary/Tree.hpp"

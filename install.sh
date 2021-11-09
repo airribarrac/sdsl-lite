@@ -92,6 +92,9 @@ if [ "`pwd`" != "${OLD_DIR}" ]; then
 fi
 
 cp -r ${CUR_DIR}/include/complementary/succinct ${SDSL_INSTALL_PREFIX}/include/complementary/succinct
+pushd ${CUR_DIR}/include/complementary/succinct
+cmake CMakeLists.txt
+popd
 
 echo "SUCCESS: sdsl was installed successfully!"
 echo "The sdsl include files are located in '${SDSL_INSTALL_PREFIX}/include'."
