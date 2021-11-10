@@ -282,6 +282,8 @@ This branch of SDSL includes code for the following research projects:
 
 This projects analyzes different approaches to speed up Turan's representation of planar embeddings (see Fast and Compact Planar Embeddings below). We use the [SUCCINCT] c++ library for its implementation of the range min tree, and it is added as a submodule on install.
 
+See [examples/planar-embedding-tree.cpp](https://github.com/airribarrac/sdsl-lite/blob/master/examples/planar-embedding-tree.cpp) for an example of its use.
+
 #### Succinct Run-length Encoded Rank/Select Data Structure
 
 This project provides a succinct data structure to support access, rank and

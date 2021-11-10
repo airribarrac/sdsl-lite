@@ -11,6 +11,7 @@ int main(int argc, char **argv) {
   // argv[1] is the path to a file with the planar embedding.
   // To check the input format, visit https://users.dcc.uchile.cl/~jfuentess/datasets/graphs.php
   Graph g = read_graph_from_file(argv[1]);
+  // See complementary/GraphVisitor for the construction methods available
   pembSuccinct<> pe(g,0,new DegHeurSTGenerator());
 
   cout << "Size in bytes: " << size_in_bytes(pe) << " B" << endl;
