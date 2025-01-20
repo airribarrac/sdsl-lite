@@ -278,6 +278,11 @@ Personal copy of SDSL
 ---------------------
 
 This branch of SDSL includes code for the following research projects:
+
+#### Heuristic-based computation of tailored spanning trees to speed up compact planar graphs
+
+This project proposes an optimization model that captures the running times of the operation of Turan's representation of planar embeddings (see Fast and Compact Planar Embeddings below). We propose heuristics that aim to improve on the proposed model. We evaluate such heuristics on the default implementatino of planar embeddings, which uses SDSL data structures, specifically the range min-max tree.
+
 #### Speeding up compact planar graphs by using shallower trees
 
 This projects analyzes different approaches to speed up Turan's representation of planar embeddings (see Fast and Compact Planar Embeddings below). We use the [SUCCINCT] c++ library for its implementation of the range min tree, and it is added as a submodule on install.
